@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@color/colorPrimary"
+        android:text="button"
+        />
+
+    <com.opticalix.dropdown_lib.DropdownView
+        android:id="@+id/dropdown_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:drop_down_arrow_up="@mipmap/ic_arrow_up"
+        app:drop_down_duration="200"
+        app:drop_down_enable_dim="true"
+        app:drop_down_list_count="2"
+        app:drop_down_list_height="150dp"
+        app:drop_down_title_background="@android:color/white"
+        app:drop_down_title_drawable_padding="10dp"
+        app:drop_down_title_padding_bottom="7dp"
+        app:drop_down_title_padding_top="7dp"
+        app:drop_down_title_text="@array/drop_down_titles"
+        app:drop_down_title_text_color="#444444"
+        app:drop_down_title_text_size="10sp">
+
+    </com.opticalix.dropdown_lib.DropdownView>
+
+</RelativeLayout>

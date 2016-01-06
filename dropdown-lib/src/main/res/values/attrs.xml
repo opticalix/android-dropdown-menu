@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DropdownView">
+        <attr name="drop_down_list_count" format="integer"/>
+        <attr name="drop_down_title_text" format="reference"/>
+        <attr name="drop_down_title_text_size" format="dimension"/>
+        <attr name="drop_down_title_text_color" format="color"/>
+        <attr name="drop_down_title_background" format="reference|color"/>
+        <attr name="drop_down_arrow_up" format="reference"/>
+        <attr name="drop_down_arrow_down" format="reference"/>
+        <attr name="drop_down_duration" format="integer"/>
+        <attr name="drop_down_list_height" format="dimension"/>
+        <attr name="drop_down_title_padding_left" format="dimension"/>
+        <attr name="drop_down_title_padding_top" format="dimension"/>
+        <attr name="drop_down_title_padding_right" format="dimension"/>
+        <attr name="drop_down_title_padding_bottom" format="dimension"/>
+        <attr name="drop_down_title_padding" format="dimension"/>
+        <attr name="drop_down_title_drawable_padding" format="dimension"/>
+        <attr name="drop_down_enable_dim" format="boolean" />
+    </declare-styleable>
+</resources>
