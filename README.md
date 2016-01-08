@@ -58,21 +58,21 @@ You can use gradle to grab it from maven central:
 You may need to modify part of the DropdownView, methods like 'setTitleBackgroundColor' are available.
 
 - optional
-    titleText
-    titleTextColor
-    titleTextSize
-    titleBackground
-    titlePadding
-    arrowDrawable
-    arrowDrawablePadding
-    listViewHeight
-    duration
+    - titleText
+    - titleTextColor
+    - titleTextSize
+    - titleBackground
+    - titlePadding
+    - arrowDrawable
+    - arrowDrawablePadding
+    - listViewHeight
+    - duration
 
 - necessary
-    listCount
-    listViews
-    enableDimBackground
-    enableAutoBackOnItemClick
+    - listCount
+    - listViews
+    - enableDimBackground
+    - enableAutoBackOnItemClick
 
 # Notice
 If you find dropdownView is cover by other views in LOLLIPOP, you can:
