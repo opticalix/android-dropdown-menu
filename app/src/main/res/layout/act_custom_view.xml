@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/root"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -21,7 +22,7 @@
         app:drop_down_duration="200"
         app:drop_down_enable_dim="true"
         app:drop_down_list_count="2"
-        app:drop_down_list_height="150dp"
+        app:drop_down_list_height="250dp"
         app:drop_down_title_background="@android:color/white"
         app:drop_down_title_drawable_padding="10dp"
         app:drop_down_title_padding_bottom="7dp"

@@ -1,7 +1,9 @@
 package com.opticalix.dropdown_lib;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.TextUtils;
@@ -29,6 +31,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class DropdownView extends RelativeLayout {
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
+    private static final String TEXT_VIEW_TAG_PREFIX = "textView";
+    private static final String LIST_VIEW_TAG_PREFIX = "listView";
 
     private Drawable mArrowDownDrawable;
     private Drawable mArrowUpDrawable;
@@ -66,13 +70,38 @@ public class DropdownView extends RelativeLayout {
     public DropdownView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initParams(context, attrs, defStyleAttr);
+
+    }
+
+    public void setup(int dropdownListCount, int titlesArrayRes, ListView... listViews){
+        mDropdownListCount = dropdownListCount;
+        resetTitles(getResources().getStringArray(titlesArrayRes));
+
         initAnchor();
+        attachListView(listViews);
+    }
+
+    public void setup(int dropdownListCount, CharSequence[] titles, ListView... listViews){
+        mDropdownListCount = dropdownListCount;
+        resetTitles(titles);
+
+        initAnchor();
+        attachListView(listViews);
+    }
+
+    public void setup(ListView... listViews){
+        initAnchor();
+        attachListView(listViews);
+    }
+
+    private void resetTitles(CharSequence[] stringArray){
+        mTitles = stringArray;
     }
 
     private void initParams(Context context, AttributeSet attrs, int defStyleAttr) {
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.DropdownView, defStyleAttr, 0);
         mDropdownListCount = a.getInteger(R.styleable.DropdownView_drop_down_list_count, 1);
-        mTitles = a.getTextArray(R.styleable.DropdownView_drop_down_title_text);
+        mTitles = a.getTextArray(R.styleable.DropdownView_drop_down_title_text);//
         mTitleTextSize = a.getDimensionPixelSize(R.styleable.DropdownView_drop_down_title_text_size, 30);
         mTitleTextColor = a.getColor(R.styleable.DropdownView_drop_down_title_text_color, 0xff444444);//colorStateList?
         mTitleBackground = a.getDrawable(R.styleable.DropdownView_drop_down_title_background);
@@ -85,7 +114,7 @@ public class DropdownView extends RelativeLayout {
 
         mTitleLinearLayoutPadding = new int[4];
         int padding = a.getDimensionPixelSize(R.styleable.DropdownView_drop_down_title_padding, 0);
-        for(int i=0; i<4; i++){
+        for (int i = 0; i < 4; i++) {
             mTitleLinearLayoutPadding[i] = padding;
         }
         mTitleLinearLayoutPadding[0] = a.getDimensionPixelSize(R.styleable.DropdownView_drop_down_title_padding_left, 0);
@@ -96,22 +125,25 @@ public class DropdownView extends RelativeLayout {
 
         a.recycle();
 
-        if(mArrowDownDrawable == null){
+        if (mArrowDownDrawable == null) {
             mArrowDownDrawable = getResources().getDrawable(R.mipmap.ic_arrow_down);
         }
         if (mArrowDownDrawable != null) {
             mArrowDownDrawable.setBounds(0, 0, mArrowDownDrawable.getMinimumWidth(), mArrowDownDrawable.getMinimumHeight());
         }
-        if(mArrowUpDrawable == null){
+        if (mArrowUpDrawable == null) {
             mArrowUpDrawable = getResources().getDrawable(R.mipmap.ic_arrow_up);
         }
         if (mArrowUpDrawable != null) {
             mArrowUpDrawable.setBounds(0, 0, mArrowUpDrawable.getMinimumWidth(), mArrowUpDrawable.getMinimumHeight());
         }
         for (int i = 0; i < mDropdownListCount; i++) {
-            if(TextUtils.isEmpty(mTitles[i])){
-                mTitles[i] = "Title-" + i;
+            if (mTitles != null && TextUtils.isEmpty(mTitles[i])) {
+                mTitles[i] = "Title-" + i;//for test
             }
+        }
+        if(mTitleBackground == null){
+            mTitleBackground = new ColorDrawable(getResources().getColor(android.R.color.white));
         }
 
         //set animation
@@ -129,7 +161,7 @@ public class DropdownView extends RelativeLayout {
             FrameLayout frameLayout = new FrameLayout(getContext());
 
             TextView title = new TextView(getContext());
-            title.setTag(generateUniqueTag4TextView(i));
+            title.setTag(generateUniqueTag(TEXT_VIEW_TAG_PREFIX, i));
             title.setCompoundDrawables(null, null, mArrowDownDrawable, null);
             title.setCompoundDrawablePadding(mDrawablePadding);
             FrameLayout.LayoutParams frameLps = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -257,14 +289,14 @@ public class DropdownView extends RelativeLayout {
             toggleListViewVisibility(which);
             mScrollerChecker.setWhich(which).setHeight(height).setDirection(ScrollerChecker.MOVE_DOWN).startScroll();
 
-            if(mEnableDim && mCovering != null){
+            if (mEnableDim && mCovering != null) {
                 mCovering.setVisibility(VISIBLE);
                 mCovering.startAnimation(mBackgroundShowAnimation);
             }
         } else {
             mScrollerChecker.setWhich(which).setHeight(height).setDirection(ScrollerChecker.MOVE_UP).startScroll();
 
-            if(mEnableDim && mCovering != null){
+            if (mEnableDim && mCovering != null) {
                 mCovering.setVisibility(VISIBLE);
                 mCovering.startAnimation(mBackgroundDismissAnimation);
             }
@@ -276,35 +308,37 @@ public class DropdownView extends RelativeLayout {
     }
 
     private void toggleTitleDrawable(int which) {
-        View view = findViewWithTag(generateUniqueTag4TextView(which));
+        View view = findViewWithTag(generateUniqueTag(TEXT_VIEW_TAG_PREFIX, which));
         if (view != null && view instanceof TextView) {
             TextView viewWithTag = (TextView) view;
             viewWithTag.setCompoundDrawables(null, null, viewWithTag.getCompoundDrawables()[2] == mArrowDownDrawable ? mArrowUpDrawable : mArrowDownDrawable, null);
         }
     }
 
-    private String generateUniqueTag4TextView(int which) {
-        return "textView-title-" + which;
+    private String generateUniqueTag(String prefix, int index) {
+        return prefix + "-" + index;
     }
-
 
     /**
      * Attach your listViews with this dropdownView. Those listViews will be shown as dropdown menu when clicking titles.
+     *
      * @param listViews
      */
-    public void attachListView(ListView... listViews) {
+    private void attachListView(ListView... listViews) {
+        String tagPrefix = LIST_VIEW_TAG_PREFIX;
         if (listViews == null || listViews.length < mDropdownListCount)
             throw new RuntimeException("should offer enough listViews");
 
         mListViews = listViews;
         for (int i = 0; i < mDropdownListCount; i++) {
             LayoutParams params;
-            ListView listView = listViews[i];
-            if(listView.getBackground() == null){
+            ListView listView;
+            listView = listViews[i];
+            listView.setTag(generateUniqueTag(tagPrefix, i));
+            addView(listView);
+            if (listView.getBackground() == null) {
                 LogUtils.w(this, "attachListView: ListView should have a background.");
             }
-
-            addView(listView);
             params = (LayoutParams) listView.getLayoutParams();
             if (params == null) {
                 params = generateRelativeLayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mListViewHeight);
@@ -341,18 +375,41 @@ public class DropdownView extends RelativeLayout {
 
         mScrollerChecker = new ScrollerChecker();
         innerCreateViews();
+    }
+
+    private void reattachListViews() {
+        String tagPrefix = "listView";
+
+        if (mListViews.length == 0 || (findViewWithTag(generateUniqueTag(tagPrefix, 0)) == null)) {
+            LogUtils.w(this, "no listViews added");
+            return;
+        }
+
+        for (int i = 0; i < mDropdownListCount; i++) {
+            LayoutParams params;
+            ListView listView;
+            listView = (ListView) findViewWithTag(generateUniqueTag(tagPrefix, i));
+
+            params = (LayoutParams) listView.getLayoutParams();
+            if (params == null) {
+                params = generateRelativeLayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mListViewHeight);
+                listView.setLayoutParams(params);
+            }
+            listView.getLayoutParams().height = mListViewHeight;
+        }
 
     }
 
     /**
      * Enable dim background, click dim background will scroll back listView
+     *
      * @param b
      */
-    public void enableDimBackground(boolean b){
+    public void enableDimBackground(boolean b) {
         mEnableDim = b;
     }
 
-    public void enableAutoBackOnItemClick(boolean b){
+    public void enableAutoBackOnItemClick(boolean b) {
         mEnableAutoBackOnItemClick = b;
     }
 
@@ -362,14 +419,16 @@ public class DropdownView extends RelativeLayout {
 
     /**
      * Re-allocate how large the width of each title is.
+     *
      * @param weight
      */
-    public void setWeightRatio(int... weight){
-        if(weight == null || weight.length != mDropdownListCount) throw new RuntimeException("not match DropdownListCount");
+    public void setWeightRatio(int... weight) {
+        if (weight == null || weight.length != mDropdownListCount)
+            throw new RuntimeException("not match DropdownListCount");
 
-        for (int i=0; i<mDropdownListCount; i++){
+        for (int i = 0; i < mDropdownListCount; i++) {
             View viewWithTag = findViewWithTag(i);
-            if(viewWithTag != null && viewWithTag instanceof FrameLayout){
+            if (viewWithTag != null && viewWithTag instanceof FrameLayout) {
                 LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) viewWithTag.getLayoutParams();
                 layoutParams.weight = weight[i];
             }
@@ -380,62 +439,68 @@ public class DropdownView extends RelativeLayout {
 
     /**
      * Set specified title text
+     *
      * @param which
      * @param title
      */
-    public void setTitleText(int which, CharSequence title){
-        View viewWithTag = findViewWithTag(generateUniqueTag4TextView(which));
-        if(viewWithTag != null && viewWithTag instanceof TextView){
+    public void setTitleText(int which, CharSequence title) {
+        View viewWithTag = findViewWithTag(generateUniqueTag(TEXT_VIEW_TAG_PREFIX, which));
+        if (viewWithTag != null && viewWithTag instanceof TextView) {
             ((TextView) viewWithTag).setText(title);
         }
     }
 
     /**
      * Set specified title color
+     *
      * @param which
      * @param color
      */
-    public void setTitleTextColor(int which, int color){
-        View viewWithTag = findViewWithTag(generateUniqueTag4TextView(which));
-        if(viewWithTag != null && viewWithTag instanceof TextView){
+    public void setTitleTextColor(int which, int color) {
+        View viewWithTag = findViewWithTag(generateUniqueTag(TEXT_VIEW_TAG_PREFIX, which));
+        if (viewWithTag != null && viewWithTag instanceof TextView) {
             ((TextView) viewWithTag).setTextColor(color);
         }
     }
 
     /**
      * Set specified title size. See {@link TypedValue} for the possible dimension units.
+     *
      * @param which Which one you want to modify.
-     * @param unit The desired dimension unit.
-     * @param size The desired size in the given units.
+     * @param unit  The desired dimension unit.
+     * @param size  The desired size in the given units.
      */
-    public void setTitleTextSize(int which, int unit, int size){
-        View viewWithTag = findViewWithTag(generateUniqueTag4TextView(which));
-        if(viewWithTag != null && viewWithTag instanceof TextView){
+    public void setTitleTextSize(int which, int unit, int size) {
+        View viewWithTag = findViewWithTag(generateUniqueTag(TEXT_VIEW_TAG_PREFIX, which));
+        if (viewWithTag != null && viewWithTag instanceof TextView) {
             ((TextView) viewWithTag).setTextSize(unit, size);
         }
     }
 
     /**
      * Set title background with color provided.
+     *
      * @param color
      */
-    public void setTitleBackgroundColor(int color){
+    public void setTitleBackgroundColor(int color) {
         mLinearContainer.setBackgroundColor(color);
     }
 
     /**
      * Set title background with resource provided.
+     *
      * @param res
      */
-    public void setTitleBackgroundResource(int res){
+    public void setTitleBackgroundResource(int res) {
         mLinearContainer.setBackgroundResource(res);
     }
 
     /**
      * Set title arrow-up drawable with resource provided. Will replace original one.
+     *
      * @param res
      */
-    public void setArrowUpDrawable(int res){
+    public void setArrowUpDrawable(int res) {
         mArrowUpDrawable = getResources().getDrawable(res);
         if (mArrowUpDrawable != null) {
             mArrowUpDrawable.setBounds(0, 0, mArrowUpDrawable.getMinimumWidth(), mArrowUpDrawable.getMinimumHeight());
@@ -444,12 +509,48 @@ public class DropdownView extends RelativeLayout {
 
     /**
      * Set title arrow-down drawable with resource provided. Will replace original one.
+     *
      * @param res
      */
-    public void setArrowDownDrawable(int res){
+    public void setArrowDownDrawable(int res) {
         mArrowDownDrawable = getResources().getDrawable(res);
         if (mArrowDownDrawable != null) {
             mArrowDownDrawable.setBounds(0, 0, mArrowUpDrawable.getMinimumWidth(), mArrowUpDrawable.getMinimumHeight());
+        }
+    }
+
+    /**
+     * Set listView's height. See {@link TypedValue} for the possible dimension units.
+     *
+     * @param unit The desired dimension unit.
+     * @param size The desired size in the given units.
+     */
+    public void setListViewHeight(int unit, int size) {
+        String tagPrefix = LIST_VIEW_TAG_PREFIX;
+        mListViewHeight = Math.round(TypedValue.applyDimension(unit, size, getResources().getDisplayMetrics()));
+        if (mListViews.length > 0 && (findViewWithTag(generateUniqueTag(tagPrefix, 0)) != null)) {
+            reattachListViews();
+        }
+    }
+
+    /**
+     * Set duration of the translation animation.
+     * @param duration Duration in milliseconds
+     */
+    public void setDuration(int duration){
+        mDuration = duration;
+        if(mBackgroundShowAnimation != null && mBackgroundDismissAnimation != null){
+            mBackgroundShowAnimation.setDuration(mDuration);
+            mBackgroundDismissAnimation.setDuration(mDuration);
+        }
+    }
+
+    /**
+     * Remove all listViews added.
+     */
+    public void removeAllListViews(){
+        for(int i=0; i<mDropdownListCount; i++){
+            removeView(mListViews[i]);
         }
     }
 
@@ -522,11 +623,11 @@ public class DropdownView extends RelativeLayout {
                     //move up, need gone
                     toggleListViewVisibility(mWhich);
 
-                    if(mEnableDim){
+                    if (mEnableDim) {
                         mCovering.clearAnimation();
                         mCovering.setVisibility(GONE);//http://stackoverflow.com/questions/4728908/android-view-with-view-gone-still-receives-ontouch-and-onclick
                     }
-                }else{
+                } else {
 
                 }
                 mMoving = false;
