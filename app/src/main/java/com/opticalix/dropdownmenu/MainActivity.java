@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "I'm a button at the bottom of the layers", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "I'm a button at the bottom layer", Toast.LENGTH_SHORT).show();
             }
         });
 

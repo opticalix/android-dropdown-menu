@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DropdownMenu.iml" filepath="$PROJECT_DIR$/DropdownMenu.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android-dropdown-menu.iml" filepath="$PROJECT_DIR$/android-dropdown-menu.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/dropdown-lib/dropdown-lib.iml" filepath="$PROJECT_DIR$/dropdown-lib/dropdown-lib.iml" />
     </modules>

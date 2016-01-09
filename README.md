@@ -1,8 +1,11 @@
 # android-dropdown-menu
 An dropdown menu for android, you can attach your own listView(s) with this.
 
+# 文档
+[DropdownMenu][1]
+
 # Demo
-![此处输入图片的描述][1]
+![DropdownMenu demo][2]
 
 # Usage
 You can use this to make several(as you want) listViews act like dropdown menu, the 'weight' of titles' width is adjustable. It will not intercept touch events when it get back.
@@ -58,7 +61,6 @@ You can use gradle to grab it from maven central:
 You may need to modify part of the DropdownView, methods like 'setTitleBackgroundColor' are available.
 
 - optional
-    - titleText
     - titleTextColor
     - titleTextSize
     - titleBackground
@@ -67,12 +69,14 @@ You may need to modify part of the DropdownView, methods like 'setTitleBackgroun
     - arrowDrawablePadding
     - listViewHeight
     - duration
+	- enableDimBackground
+    - enableAutoBackOnItemClick
 
 - necessary
     - listCount
     - listViews
-    - enableDimBackground
-    - enableAutoBackOnItemClick
+    - titleText
+
 
 # Notice
 If you find dropdownView is cover by other views in LOLLIPOP, you can:
@@ -82,4 +86,5 @@ If you find dropdownView is cover by other views in LOLLIPOP, you can:
         }
 
 
-  [1]: http://7xp2qc.com1.z0.glb.clouddn.com/dropdown_demo.gif
+  [1]: https://opticalix.github.io/2016/01/09/dropdown-menu/
+  [2]: http://7xp2qc.com1.z0.glb.clouddn.com/dropdown_demo.gif
